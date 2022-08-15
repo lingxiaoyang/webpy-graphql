@@ -43,7 +43,7 @@ class WebPyGraphqlTests(unittest.TestCase):
     def test_main_page(self):
         r = self.testApp.get('/graphql', params={'query': '{test}'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test":"Hello World"}}')
+        self.assertEqual(r.body, b'{"data":{"test":"Hello World"}}')
 
     def test_with_operation_name(self):
         r = self.testApp.get('/graphql',
@@ -164,21 +164,21 @@ class WebPyGraphqlTests(unittest.TestCase):
                               params=j(query='{test}'),
                               headers={'Content-Type': 'application/json'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test":"Hello World"}}')
+        self.assertEqual(r.body, b'{"data":{"test":"Hello World"}}')
 
     def test_allows_sending_a_mutation_via_post(self):
         r = self.testApp.post('/graphql',
                               params=j(query='mutation TestMutation { writeTest { test } }'),
                               headers={'Content-Type': 'application/json'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"writeTest":{"test":"Hello World"}}}')
+        self.assertEqual(r.body, b'{"data":{"writeTest":{"test":"Hello World"}}}')
 
     def test_allows_post_with_url_encoding(self):
         r = self.testApp.post('/graphql',
                               params=urlencode(dict(query='{test}')),
                               headers={'Content-Type': 'application/x-www-form-urlencoded'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test":"Hello World"}}')
+        self.assertEqual(r.body, b'{"data":{"test":"Hello World"}}')
 
     def test_supports_post_with_string_variables(self):
         r = self.testApp.post('/graphql',
@@ -187,7 +187,7 @@ class WebPyGraphqlTests(unittest.TestCase):
                                        variables={'name': 'John'}),
                               headers={'Content-Type': 'application/json'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test_args":"Hello John"}}')
+        self.assertEqual(r.body, b'{"data":{"test_args":"Hello John"}}')
 
     def test_supports_post_json_query_with_json_variables(self):
         r = self.testApp.post('/graphql',
@@ -196,7 +196,7 @@ class WebPyGraphqlTests(unittest.TestCase):
                                        variables={'name': 'John'}),
                               headers={'Content-Type': 'application/json'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test_args":"Hello John"}}')
+        self.assertEqual(r.body, b'{"data":{"test_args":"Hello John"}}')
 
     def test_supports_post_url_encoded_query_with_string_variables(self):
         r = self.testApp.post('/graphql',
@@ -204,7 +204,7 @@ class WebPyGraphqlTests(unittest.TestCase):
                                              variables=j(name="John"))),
                               headers={'Content-Type': 'application/x-www-form-urlencoded'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test_args":"Hello John"}}')
+        self.assertEqual(r.body, b'{"data":{"test_args":"Hello John"}}')
 
 
     def test_supports_post_json_query_with_get_variable_values(self):
@@ -212,21 +212,21 @@ class WebPyGraphqlTests(unittest.TestCase):
                               params=j(query='query helloWorld($name: String){ test_args(name: $name) }'),
                               headers={'Content-Type': 'application/json'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test_args":"Hello John"}}')
+        self.assertEqual(r.body, b'{"data":{"test_args":"Hello John"}}')
 
     def test_supports_post_url_encoded_with_get_variable_values(self):
         r = self.testApp.post('/graphql?variables={"name": "John"}',
                               urlencode(dict(query='query helloWorld($name: String){ test_args(name: $name) }')),
                               headers={'Content-Type': 'application/x-www-form-urlencoded'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test_args":"Hello John"}}')
+        self.assertEqual(r.body, b'{"data":{"test_args":"Hello John"}}')
 
     def test_supports_post_raw_with_get_variable_values(self):
         r = self.testApp.post('/graphql?variables={"name": "John"}',
                               params='query=query helloWorld($name: String){ test_args(name: $name) }',
                               headers={'Content-Type': 'application/graphql'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test_args":"Hello John"}}')
+        self.assertEqual(r.body, b'{"data":{"test_args":"Hello John"}}')
 
     def test_allows_post_with_operation_name(self):
         r = self.testApp.post('/graphql',
@@ -242,7 +242,7 @@ class WebPyGraphqlTests(unittest.TestCase):
                               headers={'Content-Type': 'application/json'})
         self.assertEqual(r.status, 200)
         self.assertEqual(r.body,
-                         '{"data":{"test_args":"Hello World","shared":"Hello Everyone"}}')
+                         b'{"data":{"test_args":"Hello World","shared":"Hello Everyone"}}')
 
     def test_allows_post_with_get_operation_name(self):
         r = self.testApp.post('/graphql?operationName=helloWorld',
@@ -257,7 +257,7 @@ class WebPyGraphqlTests(unittest.TestCase):
                               headers={'Content-Type': 'application/json'})
         self.assertEqual(r.status, 200)
         self.assertEqual(r.body,
-                         '{"data":{"test_args":"Hello World","shared":"Hello Everyone"}}')
+                         b'{"data":{"test_args":"Hello World","shared":"Hello Everyone"}}')
 
     def test_not_pretty_by_default(self):
         app = create_app(pretty=False)
@@ -266,7 +266,7 @@ class WebPyGraphqlTests(unittest.TestCase):
 
         r = self.testApp.get('/graphql', params={ 'query': 'query{test}'})
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"test":"Hello World"}}')
+        self.assertEqual(r.body, b'{"data":{"test":"Hello World"}}')
 
     def test_supports_pretty_printing_by_test(self):
         app = create_app(pretty=True)
@@ -275,7 +275,7 @@ class WebPyGraphqlTests(unittest.TestCase):
 
         r = self.testApp.get('/graphql', params={ 'query': 'query{test}' })
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{\n  "data": {\n    "test": "Hello World"\n  }\n}')
+        self.assertEqual(r.body, b'{\n  "data": {\n    "test": "Hello World"\n  }\n}')
 
     def test_handles_field_errors_caught_by_graphql(self):
         r = self.testApp.get('/graphql', params={ 'query': '{thrower}' })
@@ -332,14 +332,14 @@ class WebPyGraphqlTests(unittest.TestCase):
     def test_supports_custom_context(self):
         r = self.testApp.get('/graphql', params={ 'query': 'query{context}' })
         self.assertEqual(r.status, 200)
-        self.assertEqual(r.body, '{"data":{"context":"CUSTOM CONTEXT"}}')
+        self.assertEqual(r.body, b'{"data":{"context":"CUSTOM CONTEXT"}}')
 
     def test_post_multipart_data(self):
         query = 'mutation TestMutation { writeTest { test } }'
 
         r = self.testApp.post('/graphql',
                               params={'query': query},
-                              upload_files=[("Test", "text1.txt", "Guido")])
+                              upload_files=[(b"Test", b"text1.txt", b"Guido")])
         self.assertEqual(r.status, 200)
         self.assertEqual(json.loads(r.body),
                          {u'data': {u'writeTest': {u'test': u'Hello World'}}})
@@ -396,7 +396,7 @@ class WebPyGraphqlTests(unittest.TestCase):
                              params={ 'query': 'query { test }' },
                              headers={'Accept': 'text/html'})
         self.assertEqual(r.status, 200)
-        self.assertIn("<title>TestTitle</title>", r.body)
+        self.assertIn(b"<title>TestTitle</title>", r.body)
 
 
 if __name__ == '__main__':

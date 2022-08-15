@@ -260,7 +260,7 @@ class GraphQLView(six.with_metaclass(InitSubclassMeta)):
 
     @classmethod
     def can_display_graphiql(cls, data):
-        raw = 'raw' in web.input() or 'raw' in web.data()
+        raw = b'raw' in web.input() or b'raw' in web.data()
         return not raw and cls.request_wants_html()
 
     @classmethod
