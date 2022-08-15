@@ -256,6 +256,13 @@ class GraphQLView(six.with_metaclass(InitSubclassMeta)):
     @staticmethod
     def check_data_underfiend(param, data):
         parameter = web.input().get(param, None) or data.get(param, None)
+
+        if not parameter:
+            # Try reading the raw data
+            parameter = data.get(six.b(param), None)
+            if isinstance(parameter, six.binary_type):
+                parameter = parameter.decode('utf-8')
+
         return parameter if parameter != "undefined" else None
 
     @classmethod
