@@ -1,15 +1,17 @@
+from __future__ import absolute_import
+
 import json
 import web
 import six
 import re
 import os
-import urlparse
+import six.moves.urllib.parse
 
 
 from werkzeug.exceptions import BadRequest, MethodNotAllowed
-from urllib import unquote
-from utils import props
-from init_subclass_meta import InitSubclassMeta
+from six.moves.urllib.parse import unquote
+from .utils import props
+from .init_subclass_meta import InitSubclassMeta
 
 from graphql import Source, execute, parse, validate
 from graphql.error import format_error as format_graphql_error
@@ -17,6 +19,7 @@ from graphql.error import GraphQLError
 from graphql.execution import ExecutionResult
 from graphql.type.schema import GraphQLSchema
 from graphql.utils.get_operation_ast import get_operation_ast
+from six.moves import map
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 DIR_PATH = os.path.join(BASE_DIR, 'templates')
@@ -32,7 +35,7 @@ def get_accepted_content_types():
          return parts[0], 1
 
      raw_content_types = web.ctx.env.get('HTTP_ACCEPT', '*/*').split(',')
-     qualified_content_types = map(qualify, raw_content_types)
+     qualified_content_types = list(map(qualify, raw_content_types))
      return list(x[0] for x in sorted(qualified_content_types,
                                       key=lambda x: x[1], reverse=True))
 
@@ -43,9 +46,7 @@ class HttpError(Exception):
         super(HttpError, self).__init__(message, *args, **kwargs)
 
 
-class GraphQLView:
-    __metaclass__ = InitSubclassMeta
-
+class GraphQLView(six.with_metaclass(InitSubclassMeta)):
     schema = None
     executor = None
     root_value = None
@@ -59,7 +60,7 @@ class GraphQLView:
 
     def __init__(self, *args, **kwargs):
         if hasattr(self, 'GraphQLMeta'):
-            for key, value in props(self.GraphQLMeta).iteritems():
+            for key, value in six.iteritems(props(self.GraphQLMeta)):
                 setattr(self, key, value)
 
         assert not all((self.graphiql, self.batch)), 'Use either graphiql or batch processing'
@@ -80,7 +81,7 @@ class GraphQLView:
         return self.executor
 
     def render_graphiql(self, **kwargs):
-        for key, value in kwargs.iteritems():
+        for key, value in six.iteritems(kwargs):
             kwargs[key] = json.dumps(kwargs.get(key, None))
 
         render = web.template.render(DIR_PATH)
@@ -202,7 +203,7 @@ class GraphQLView:
     def parse_body(self):
         content_type = web.ctx.env.get('CONTENT_TYPE')
         if content_type == 'application/graphql':
-            return dict(urlparse.parse_qsl(web.data()))
+            return dict(six.moves.urllib.parse.parse_qsl(web.data()))
 
         elif content_type == 'application/json':
             try:
@@ -216,7 +217,7 @@ class GraphQLView:
                 raise HttpError(BadRequest('POST body sent invalid JSON.'))
 
         elif content_type == 'application/x-www-form-urlencoded':
-            return dict(urlparse.parse_qsl(web.data()))
+            return dict(six.moves.urllib.parse.parse_qsl(web.data()))
 
         elif content_type == 'multipart/form-data':
             return web.data()

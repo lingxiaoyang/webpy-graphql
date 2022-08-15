@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from graphql.type.definition import GraphQLArgument, GraphQLField, GraphQLNonNull, GraphQLObjectType
 from graphql.type.scalars import GraphQLString, GraphQLInt
 from graphql.type.schema import GraphQLSchema

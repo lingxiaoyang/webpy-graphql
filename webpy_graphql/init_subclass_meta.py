@@ -1,4 +1,5 @@
-from utils import props
+from __future__ import absolute_import
+from .utils import props
 from inspect import isclass
 
 class InitSubclassMeta(type):

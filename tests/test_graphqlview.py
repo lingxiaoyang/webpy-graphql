@@ -1,13 +1,14 @@
+from __future__ import absolute_import
 import json
 import web
 import unittest
 from functools import wraps
 
 from paste.fixture import TestApp
-from app import create_app
+from .app import create_app
 
 try:
-    from urllib import urlencode
+    from six.moves.urllib.parse import urlencode
 except ImportError:
     from urllib.parse import urlencode
 
