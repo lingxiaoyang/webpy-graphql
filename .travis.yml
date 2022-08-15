@@ -2,6 +2,7 @@ language: python
 sudo: false
 python:
 - 2.7
+- 3.7
 matrix:
   fast_finish: true
   include:
@@ -9,8 +10,11 @@ matrix:
     env: TEST_ENV=webpy_graphql
   - python: '2.7'
     env: TEST_ENV=webpy_graphql
+  - python: '3.7'
+    env: TEST_ENV=webpy_graphql
 install:
 - pip install -r requirements.txt
+- pip install Paste
 - pip install python-coveralls
 - pip install nose
 script:
