@@ -13,20 +13,20 @@ QueryRootType = GraphQLObjectType(
     fields={
         'thrower': GraphQLField(GraphQLNonNull(GraphQLString), resolver=resolve_raises),
         'context': GraphQLField(
-            type=GraphQLNonNull(GraphQLString),
+            GraphQLNonNull(GraphQLString),
             resolver=lambda self, info, **kwargs: info.context),
 
         'test': GraphQLField(
-            type=GraphQLNonNull(GraphQLString),
+            GraphQLNonNull(GraphQLString),
             resolver=lambda self, info: 'Hello World'
         ),
         'test_args': GraphQLField(
-            type=GraphQLNonNull(GraphQLString),
+            GraphQLNonNull(GraphQLString),
             args={'name': GraphQLArgument(GraphQLString)},
             resolver=lambda self, info, **kwargs: 'Hello {}'.format(kwargs.get("name"))
         ),
         'test_def_args': GraphQLField(
-            type=GraphQLString,
+            GraphQLString,
             args={'name': GraphQLArgument(GraphQLString),},
             resolver=lambda self, info, name="World": 'Hello {}'.format(name)
         )
@@ -37,7 +37,7 @@ MutationRootType = GraphQLObjectType(
     name='MutationRoot',
     fields={
         'writeTest': GraphQLField(
-            type=QueryRootType,
+            QueryRootType,
             resolver=lambda *_: QueryRootType
         )
     }
